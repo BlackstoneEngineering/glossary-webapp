@@ -1,86 +1,50 @@
 ---
 ---
-function select_daplink_board(board) {
-    var board_info;
-    for (var i=0; i<_daplink_board_options.data.length; i++) {
-        if (_daplink_board_options.data[i].name == board) {
-            board_info = _daplink_board_options.data[i];
+function select_glossary(term) {
+    var glossary_info;
+    for (var i=0; i<_glossary.data.length; i++) {
+        if (_glossary.data[i].name == term) {
+            glossary_info = _glossary.data[i];
         };
     };
-    if (!board_info) return;
+    if (!glossary_info) return;
 
     // Display instructions if not already shown
-    if($('#update-instructions').css('display') == 'none'){
-        $('#update-instructions').fadeIn();
+    if($('#glossary-instructions').css('display') == 'none'){
+        $('#glossary-instructions').fadeIn();
     }
 
-    // Load instructions to their tabs
-    var winvalue = board_info.windows_instructions;
-    var linvalue = board_info.linux_instructions;
-    var osxvalue = board_info.osx_instructions;
-    $("#update-instructions-windows").html(winvalue);
-    $("#update-instructions-linux").html(linvalue);
-    $("#update-instructions-osx").html(osxvalue);
+    // Load terms to their divs
+    var name			= glossary_info.name;
+    var deffinition		= glossary_info.deffinition;
+    var notes 			= glossary_info.notes;
+    var cross_reference = glossary_info.crossreference;
+    $("#term").html(name)
+    $("#deffinition").html(deffinition)
 
-    //  Output file name
-    var fw_name = board_info.fw_name;
-    $('#file-name').html('Firmware File: <a href= "{{site.baseurl}}/firmware/'+fw_name +'">' +fw_name +'</a>');
-
-    // Set default tab based on browser
-    var os = navigator.platform;
-
-    if (navigator.appVersion.indexOf("Win")!=-1){
-        $('.nav-tabs a[href="#update-instructions-windows"]').tab('show');
-    };
-    if (navigator.appVersion.indexOf("Mac")!=-1){
-        $('.nav-tabs a[href="#update-instructions-osx"]').tab('show');
-    };
-    if (navigator.appVersion.indexOf("X11")!=-1){
-        $('.nav-tabs a[href="#update-instructions-linux"]').tab('show');
-    };
-    if (navigator.appVersion.indexOf("Linux")!=-1){
-        $('.nav-tabs a[href="#update-instructions-linux"]').tab('show');
-    };
+    $("#notes").html(notes)
+    $("#references").html(cross_reference)
 };
 
-var _daplink_board_options = {
+var _glossary = {
 	data:[
 		{% for thing in site.data.update %} 
 		{
 			"name": "{{thing.name}}", 
-			"code": "{{thing.product_code}}",
-			"logoURL": "{{thing.logoURL}}",
-			//  assemble name of firmware file
-			"fw_name":  {% if thing.fw_name != nil%}
-							{%if thing.image_format == nil %}
-							"{{site.data.update[0].default.fw_version}}_{{thing.fw_name}}{{site.data.update[0].default.image_format}}",
-							{% else %}
-							"{{site.data.update[0].default.fw_version}}_{{thing.fw_name}}{{thing.image_format}}",
-							{%endif%}
-						{%else%}
-							"None",
-						{%endif%}
-			// load instructions if they exist, otherwise load default instructions (at index 0)
-			"windows_instructions": {% if thing.instructions.windows == nil %}
-								{{site.data.update[0].default.instructions.windows | markdownify | jsonify}},
-								{% else %}
-								{{thing.instructions.windows | markdownify | jsonify}},
-								{% endif %}
-			"linux_instructions": {% if thing.instructions.linux == nil %}
-								// "test data of awesome"
-								{{site.data.update[0].default.instructions.linux | markdownify | jsonify}},
-								{% else %}
-								{{thing.instructions.linux | markdownify | jsonify}},
-								{% endif %}
-			"osx_instructions": {% if thing.instructions.osx == nil %}
-								// "test data of awesome"
-								{{site.data.update[0].default.instructions.osx | markdownify | jsonify}}
-								{% else %}
-								{{thing.instructions.osx | markdownify | jsonify}}
-								{% endif %}
+			"deffinition": "{{thing.deffinition}}",
+			"notes": {%if thing.deffinition == nil%}
+					 	"None",
+					 {%else%}
+						"{{thing.notes}}", 
+					 {%endif%}
+			"crossreference": {%if thing.crossreference == nil%}
+							 	"None",
+							 {%else%}
+								"{{thing.crossreference}}", 
+							 {%endif%}
 		},
   		{% endfor %}
- ],
+ 	],
 
 	getValue: "name",
 
@@ -102,7 +66,7 @@ var _daplink_board_options = {
 			time: 300
 		},
 		onChooseEvent: function(){
-            select_daplink_board($("#update-search").val());
+            select_glossary($("#glossary-search").val());
 		}
 	},
 
@@ -110,9 +74,9 @@ var _daplink_board_options = {
 
 };
 
-$("#update-search").easyAutocomplete(_daplink_board_options);
+$("#glossary-search").easyAutocomplete(_glossary);
 
-// Check ?board=... and get sht done
+// Check ?term=... and get sht done
 var params = [];
 var hashes = window.location.href.replace(/#.+/,'').slice(window.location.href.indexOf('?') + 1).split('&');
 for(var i = 0; i < hashes.length; i++)
@@ -121,7 +85,7 @@ for(var i = 0; i < hashes.length; i++)
     params[hash[0]] = hash[1];
 };
 
-if (typeof params['board'] != 'undefined') {
-    $("#update-search").val(params['board']);
-    select_daplink_board(params['board']);
+if (typeof params['term'] != 'undefined') {
+    $("#glossary-search").val(params['term']);
+    select_glossary(params['term']);
 };

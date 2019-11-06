@@ -1,10 +1,10 @@
-url: https://ARMmbed.github.io
-baseurl: /DAPLink/
+url: https://blackstoneengineering.github.io
+baseurl: /glossary-webapp/
 
 # Site settings
-title: DAPLink
-email: support@mbed.com
-description: "mbed DAPLink interface firmware."
+title: Glossary
+email: email_goes_here
+description: "Glossary for all your corporate needs"
 
 # Build settings
 markdown: kramdown

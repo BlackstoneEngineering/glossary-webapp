@@ -368,6 +368,10 @@ section h3.section-subheading {
     display:none;
 }
 
+/*#glossary-instructions{
+    display:none;
+}*/
+
 .timeline {
     position: relative;
     padding: 0;
